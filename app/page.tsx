@@ -21,7 +21,7 @@ type SkillGroup = {
 const experience: Job[] = experienceData;
 const skills: SkillGroup[] = skillsData;
 
-const TITLES = ["Front End Developer", "React & Angular Expert", "Federal Tech Specialist"];
+const TITLES = ["Front End Developer", "Web Developer", "React & Angular Expert", "Federal Tech Specialist"];
 
 const CONTACT_LINKS = [
   { icon: "✉",   label: "miketaylorforhire@gmail.com",     href: "mailto:miketaylorforhire@gmail.com" },
@@ -62,32 +62,103 @@ function AnimatedItem({ children, className, delay = 0 }: { children: React.Reac
   );
 }
 
+function StatCounter({ num, label }: { num: string; label: string }) {
+  const hasPlus = num.endsWith("+");
+  const target = parseInt(num);
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const visible = useIntersection(ref);
+  useEffect(() => {
+    if (!visible) return;
+    const steps = 40;
+    const interval = 900 / steps;
+    const increment = target / steps;
+    let current = 0;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) { setCount(target); clearInterval(timer); }
+      else setCount(Math.floor(current));
+    }, interval);
+    return () => clearInterval(timer);
+  }, [visible]);
+  return (
+    <div ref={ref}>
+      <div className="stat-num">{count}{hasPlus ? "+" : ""}</div>
+      <div className="stat-label">{label}</div>
+    </div>
+  );
+}
+
 function scrollTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 }
 
 export default function Portfolio() {
   const [titleIndex, setTitleIndex] = useState(0);
+  const [showTop, setShowTop] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const t = setInterval(() => setTitleIndex(i => (i + 1) % TITLES.length), 3000);
     return () => clearInterval(t);
   }, []);
 
+  useEffect(() => {
+    const SECTIONS = ["experience", "skills", "certifications", "contact"];
+    const onScroll = () => {
+      const sy = window.scrollY;
+      setShowTop(sy > 400);
+      const total = document.body.scrollHeight - window.innerHeight;
+      setScrollProgress(total > 0 ? sy / total : 0);
+      const mid = sy + window.innerHeight / 2;
+      let active = "";
+      for (const id of SECTIONS) {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= mid) active = id;
+      }
+      setActiveSection(active);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (!t.closest("nav") && !t.closest(".mobile-menu")) setMenuOpen(false);
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [menuOpen]);
+
   return (
     <>
       <div className="grid-bg" />
       <div className="noise" />
+      <div className="scroll-progress" style={{ width: `${scrollProgress * 100}%` }} />
 
       {/* NAV */}
       <nav>
-        <a className="nav-logo">MT</a>
+        <a className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}><img src="/icon.svg" alt="MT" width={36} height={36} /></a>
         <ul className="nav-links">
           {["experience", "skills", "certifications", "contact"].map(s => (
-            <li key={s}><a onClick={() => scrollTo(s)}>{s}</a></li>
+            <li key={s}><a onClick={() => scrollTo(s)} className={activeSection === s ? "active" : ""}>{s}</a></li>
           ))}
         </ul>
+        <button className={`hamburger ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(o => !o)} aria-label="Toggle menu">
+          <span /><span /><span />
+        </button>
       </nav>
+
+      {/* MOBILE MENU */}
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        {["experience", "skills", "certifications", "contact"].map(s => (
+          <a key={s} onClick={() => { scrollTo(s); setMenuOpen(false); }} className={activeSection === s ? "active" : ""}>{s}</a>
+        ))}
+      </div>
 
       {/* HERO */}
       <section className="hero" id="hero">
@@ -113,10 +184,7 @@ export default function Portfolio() {
           </div>
           <div className="hero-stats">
             {STATS.map(([num, label]) => (
-              <div key={label}>
-                <div className="stat-num">{num}</div>
-                <div className="stat-label">{label}</div>
-              </div>
+              <StatCounter key={label} num={num} label={label} />
             ))}
           </div>
         </div>
@@ -213,6 +281,14 @@ export default function Portfolio() {
       <footer>
         <p>© 2025 Michael Taylor</p>
       </footer>
+
+      <button
+        className={`back-to-top ${showTop ? "visible" : ""}`}
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        aria-label="Back to top"
+      >
+        ↑
+      </button>
     </>
   );
 }

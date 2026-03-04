@@ -15,7 +15,20 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Mike E. Taylor | Full Stack Developer",
-  description: "Mike E. Taylor | Full Stack Developer",
+  description: "Mission-driven developer with 15+ years building responsive, accessible web applications for federal and defense clients — including NASA and the U.S. Naval Academy.",
+  icons: { icon: "/icon.svg" },
+  openGraph: {
+    title: "Mike E. Taylor | Full Stack Developer",
+    description: "Mission-driven developer with 15+ years building responsive, accessible web applications for federal and defense clients — including NASA and the U.S. Naval Academy.",
+    url: "https://mikeetaylor.com",
+    siteName: "Mike E. Taylor",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Mike E. Taylor | Full Stack Developer",
+    description: "Mission-driven developer with 15+ years building responsive, accessible web applications for federal and defense clients.",
+  },
 };
 
 export default function RootLayout({
