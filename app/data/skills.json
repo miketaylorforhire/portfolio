@@ -1,0 +1,18 @@
+[
+  {
+    "group": "Frontend",
+    "items": ["React", "Angular (2–17)", "AngularJS", "Next.js", "TypeScript", "JavaScript (ES6+)", "HTML5", "CSS3"]
+  },
+  {
+    "group": "Styling",
+    "items": ["Tailwind CSS", "Bootstrap", "Material UI", "Foundation", "Responsive Design", "Section 508"]
+  },
+  {
+    "group": "Backend & APIs",
+    "items": ["RESTful APIs", ".NET Core", "SQL Server", "MySQL", "PHP", "Node.js"]
+  },
+  {
+    "group": "Tools & Platforms",
+    "items": ["Git", "GitLab", "Azure", "Docker", "Postman", "Swagger", "JIRA", "Confluence"]
+  }
+]

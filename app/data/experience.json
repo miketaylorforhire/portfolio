@@ -1,0 +1,63 @@
+[
+  {
+    "company": "Halvik / NASA",
+    "role": "Front End Developer",
+    "location": "Greenbelt, MD",
+    "date": "Mar 2024 — Present",
+    "bullets": [
+      "Building user-facing features for a React-based federal procurement application used daily by NASA staff.",
+      "Architected a reusable UI component library, standardizing design patterns across the team.",
+      "Integrated RESTful APIs to surface database-driven content, improving real-time data accuracy.",
+      "Own overall application look-and-feel with a focus on usability and Section 508 compliance."
+    ],
+    "tech": ["React", "TypeScript", "Next.js", "Tailwind CSS", "Material UI", "REST APIs", "MySQL", "GitLab", "Swagger"]
+  },
+  {
+    "company": "The Coleman Group / U.S. Naval Academy",
+    "role": "Front End Developer",
+    "location": "Greenbelt, MD",
+    "date": "May 2020 — Dec 2023",
+    "bullets": [
+      "Designed and maintained Angular applications for public-facing and internal USNA portals serving thousands of users.",
+      "Built Angular 17 front ends integrated with .NET Core backends and custom SharePoint master pages.",
+      "Partnered with Navy clients to gather requirements, establish timelines, and define UI standards.",
+      "Resolved help desk escalations and trained end users on CMS publishing workflows."
+    ],
+    "tech": ["Angular 17", "TypeScript", ".NET Core", "SharePoint", "Azure", "SQL Server", "Postman"]
+  },
+  {
+    "company": "ProSphere / Veterans Administration",
+    "role": "Web Application Developer",
+    "location": "Alexandria, VA",
+    "date": "Oct 2018 — Feb 2020",
+    "bullets": [
+      "Designed and delivered 3 web applications supporting VA initiatives with full Section 508 compliance.",
+      "Modernized legacy Angular application by rebuilding components in Angular 7/8 and TypeScript.",
+      "Developed landing pages, data tables, and online forms; created wireframes for stakeholder reviews."
+    ],
+    "tech": ["Angular 7/8", "TypeScript", "Material UI", "Bootstrap", "HTML5", "CSS3", ".NET", "Git"]
+  },
+  {
+    "company": "General Dynamics / Verscend",
+    "role": "Principal Programmer",
+    "location": "Towson, MD",
+    "date": "Aug 2015 — Jul 2018",
+    "bullets": [
+      "Led front-end development of enterprise reporting SPAs, migrating a legacy platform to a modern TypeScript stack.",
+      "Drove code reviews, unit testing, and UI/UX decisions with cross-functional Agile teams.",
+      "Managed sprint status and estimates through JIRA and Confluence."
+    ],
+    "tech": ["AngularJS", "Angular 6", "TypeScript", "Bootstrap", "JIRA", "Git", "Spring MVC"]
+  },
+  {
+    "company": "Maryland Dept. of Transportation",
+    "role": "Webmaster Supervisor",
+    "location": "Hanover, MD",
+    "date": "Jan 2010 — Nov 2013",
+    "bullets": [
+      "Managed maryland.gov and multiple state portals; led team responsible for uptime and outage response.",
+      "Oversaw UX/UI design for all internal web properties; contributed to SharePoint 2010 extranet rollout."
+    ],
+    "tech": ["JavaScript", "jQuery", "HTML5", "CSS3", "SharePoint", "WordPress", "ColdFusion"]
+  }
+]
