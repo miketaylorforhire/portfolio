@@ -99,6 +99,7 @@ export default function Portfolio() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [resumeOpen, setResumeOpen] = useState(false);
 
   useEffect(() => {
     const t = setInterval(() => setTitleIndex(i => (i + 1) % TITLES.length), 3000);
@@ -133,6 +134,16 @@ export default function Portfolio() {
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (!resumeOpen) return;
+    const handler = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (!t.closest(".resume-download")) setResumeOpen(false);
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [resumeOpen]);
 
   return (
     <>
@@ -181,6 +192,15 @@ export default function Portfolio() {
             <button className="btn-secondary" onClick={() => scrollTo("contact")}>
               Get In Touch
             </button>
+            <div className="resume-download">
+              <button className="btn-secondary" onClick={() => setResumeOpen(o => !o)}>
+                Download Resume ▾
+              </button>
+              <div className={`resume-dropdown ${resumeOpen ? "open" : ""}`}>
+                <a href="/docs/Mike-Taylor-Resume.pdf" download>PDF</a>
+                <a href="/docs/Mike-Taylor-Resume.docx" download>Word (.docx)</a>
+              </div>
+            </div>
           </div>
           <div className="hero-stats">
             {STATS.map(([num, label]) => (
