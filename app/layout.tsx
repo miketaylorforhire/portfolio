@@ -1,17 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import "./portfolio-styles.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import "./styles.css";
 
 export const metadata: Metadata = {
   title: "Mike E. Taylor | Full Stack Developer",
@@ -25,9 +14,12 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Mike E. Taylor | Full Stack Developer",
     description: "Mission-driven developer with 15+ years building responsive, accessible web applications for federal and defense clients.",
+  },
+  alternates: {
+    canonical: "https://mikeetaylor.com",
   },
 };
 
@@ -39,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="antialiased"
       >
         {children}
       </body>

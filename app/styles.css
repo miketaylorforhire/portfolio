@@ -472,7 +472,12 @@ footer {
   .mobile-menu { display: flex; }
   .hero { padding: 100px 24px 60px; }
   .section-inner { padding: 72px 24px; }
-  .hero-stats { gap: 32px; flex-wrap: wrap; }
+  .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 32px 24px; }
+  .hero-cta { flex-direction: column; }
+  .hero-cta .btn-primary,
+  .hero-cta .btn-secondary,
+  .hero-cta .resume-download,
+  .hero-cta .resume-download button { width: 100%; }
   .contact-inner { padding: 72px 24px; }
   .timeline-card { padding: 24px; }
   footer { padding: 24px; }

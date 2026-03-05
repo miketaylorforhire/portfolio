@@ -21,12 +21,13 @@ type SkillGroup = {
 const experience: Job[] = experienceData;
 const skills: SkillGroup[] = skillsData;
 
+const AVAILABLE = true; // set to false when no longer looking
 const TITLES = ["Front End Developer", "Web Developer", "React & Angular Expert", "Federal Tech Specialist"];
 
 const CONTACT_LINKS = [
   { icon: "✉",   label: "miketaylorforhire@gmail.com",     href: "mailto:miketaylorforhire@gmail.com" },
-  { icon: "📞",  label: "410-940-2232",                    href: "tel:4109402232" },
-  { icon: "🌐",  label: "mikeetaylor.com",                 href: "https://mikeetaylor.com" },
+  { icon: "📞",  label: "410-940-2232",                    href: "tel:14109402232" },
+  { icon: "🌐",  label: "mikeetaylor.com",                 href: "https://mikeetaylor.com/" },
   { icon: "in",  label: "linkedin.com/in/miketaylorforhire", href: "https://www.linkedin.com/in/miketaylorforhire/" },
   { icon: "</>", label: "github.com/miketaylorforhire",           href: "https://github.com/miketaylorforhire/" },
 ];
@@ -113,11 +114,11 @@ export default function Portfolio() {
       setShowTop(sy > 400);
       const total = document.body.scrollHeight - window.innerHeight;
       setScrollProgress(total > 0 ? sy / total : 0);
-      const mid = sy + window.innerHeight / 2;
+      const threshold = sy + 100;
       let active = "";
       for (const id of SECTIONS) {
         const el = document.getElementById(id);
-        if (el && el.offsetTop <= mid) active = id;
+        if (el && el.offsetTop <= threshold) active = id;
       }
       setActiveSection(active);
     };
@@ -153,10 +154,10 @@ export default function Portfolio() {
 
       {/* NAV */}
       <nav>
-        <a className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}><img src="/icon.svg" alt="MT" width={36} height={36} /></a>
+        <a className="nav-logo" href="#hero" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}><img src="/icon.svg" alt="MT" width={36} height={36} /></a>
         <ul className="nav-links">
           {["experience", "skills", "certifications", "contact"].map(s => (
-            <li key={s}><a onClick={() => scrollTo(s)} className={activeSection === s ? "active" : ""}>{s}</a></li>
+            <li key={s}><a href={`#${s}`} onClick={e => { e.preventDefault(); scrollTo(s); }} className={activeSection === s ? "active" : ""}>{s}</a></li>
           ))}
         </ul>
         <button className={`hamburger ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(o => !o)} aria-label="Toggle menu">
@@ -167,7 +168,7 @@ export default function Portfolio() {
       {/* MOBILE MENU */}
       <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
         {["experience", "skills", "certifications", "contact"].map(s => (
-          <a key={s} onClick={() => { scrollTo(s); setMenuOpen(false); }} className={activeSection === s ? "active" : ""}>{s}</a>
+          <a key={s} href={`#${s}`} onClick={e => { e.preventDefault(); scrollTo(s); setMenuOpen(false); }} className={activeSection === s ? "active" : ""}>{s}</a>
         ))}
       </div>
 
@@ -175,7 +176,7 @@ export default function Portfolio() {
       <section className="hero" id="hero">
         <div className="hero-glow" />
         <div style={{ maxWidth: 1100, margin: "0 auto", width: "100%" }}>
-          <div className="hero-eyebrow">Available for opportunities</div>
+          {AVAILABLE && <div className="hero-eyebrow">Available for opportunities</div>}
           <h1 className="hero-name">Michael<br /><span>Taylor</span></h1>
           <p className="hero-title">
             {TITLES[titleIndex]}<span className="cursor" />
@@ -299,7 +300,7 @@ export default function Portfolio() {
       </section>
 
       <footer>
-        <p>© 2025 Michael Taylor</p>
+        <p>© {new Date().getFullYear()} Michael Taylor</p>
       </footer>
 
       <button
