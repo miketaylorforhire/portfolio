@@ -28,6 +28,27 @@ body {
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 2px; }
 
+/* SKIP LINK */
+.skip-link {
+  position: absolute; top: -100%; left: 0;
+  background: var(--bg); color: var(--cyan);
+  padding: 12px 20px; z-index: 9999;
+  font-size: 14px; font-weight: 500;
+  text-decoration: none; border: 1px solid var(--cyan);
+}
+.skip-link:focus { top: 0; }
+
+/* FOCUS STYLES */
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
 /* BACKGROUND EFFECTS */
 .grid-bg {
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
@@ -76,8 +97,8 @@ nav {
   transition: color 0.2s; cursor: pointer;
 }
 .nav-links a:hover { color: var(--cyan); }
-.nav-links a.active { color: var(--cyan); }
-.mobile-menu a.active { color: var(--cyan); }
+.nav-links a.active { color: var(--cyan); font-weight: 700; }
+.mobile-menu a.active { color: var(--cyan); font-weight: 700; }
 
 section { position: relative; z-index: 1; }
 
@@ -463,6 +484,76 @@ footer {
 }
 .mobile-menu a:last-child { border-bottom: none; }
 .mobile-menu a:hover { color: var(--cyan); }
+
+/* PRINT */
+@media print {
+  :root {
+    --bg:           #fff;
+    --bg-card:      #f7f7f7;
+    --bg-card-hover:#f0f0f0;
+    --cyan:         #006d85;
+    --cyan-glow:    rgba(0, 109, 133, 0.08);
+    --cyan-glow2:   rgba(0, 109, 133, 0.04);
+    --white:        #111;
+    --muted:        #444;
+    --border:       #ccc;
+    --border-hover: #999;
+  }
+
+  /* Hide chrome */
+  header, .mobile-menu, .back-to-top, .scroll-progress,
+  .grid-bg, .noise, .hero-glow, .hero-cta, .skip-link { display: none !important; }
+
+  body { background: #fff; color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* Collapse hero — no full-viewport height on paper */
+  .hero { min-height: 0; padding: 32pt 48pt 24pt; }
+  .hero-stats { margin-top: 24pt; padding-top: 24pt; }
+
+  /* Sections */
+  .section-inner { padding: 24pt 48pt; }
+  section { background: none !important; }
+
+  /* Contact */
+  .contact-section { background: none; border: none; }
+  .contact-inner { padding: 24pt 48pt; flex-direction: column; align-items: flex-start; gap: 16pt; }
+
+  /* Make all animated items visible */
+  .timeline-item,
+  .skill-group,
+  .cert-card,
+  .edu-card { opacity: 1 !important; transform: none !important; }
+
+  /* Avoid splitting cards across pages */
+  .timeline-item,
+  .timeline-card,
+  .cert-card,
+  .edu-card { page-break-inside: avoid; break-inside: avoid; }
+
+  /* Remove glow/shadow noise */
+  .timeline-dot { box-shadow: none; }
+
+  /* Watermark */
+  body::after {
+    content: 'Michael Taylor';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80pt;
+    letter-spacing: 8px;
+    color: rgba(0, 109, 133, 0.07);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Links — keep readable, don't show raw hrefs */
+  a { text-decoration: none; color: inherit; }
+
+  footer { padding: 16pt 48pt; border-top: 1px solid #ccc; background: none; }
+}
 
 /* RESPONSIVE */
 @media (max-width: 768px) {

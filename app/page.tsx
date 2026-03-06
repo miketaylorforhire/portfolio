@@ -29,7 +29,7 @@ const CONTACT_LINKS = [
   { icon: "📞",  label: "410-940-2232",                    href: "tel:14109402232" },
   { icon: "🌐",  label: "mikeetaylor.com",                 href: "https://mikeetaylor.com/" },
   { icon: "in",  label: "linkedin.com/in/miketaylorforhire", href: "https://www.linkedin.com/in/miketaylorforhire/" },
-  { icon: "</>", label: "github.com/miketaylorforhire",           href: "https://github.com/miketaylorforhire/" },
+  { icon: "</>", label: "github.com/miketaylorforhire",    href: "https://github.com/miketaylorforhire/" },
 ];
 
 const STATS: [string, string][] = [
@@ -70,6 +70,12 @@ function StatCounter({ num, label }: { num: string; label: string }) {
   const ref = useRef(null);
   const visible = useIntersection(ref);
   useEffect(() => {
+    const handler = () => setCount(target);
+    window.addEventListener("beforeprint", handler);
+    return () => window.removeEventListener("beforeprint", handler);
+  }, [target]);
+
+  useEffect(() => {
     if (!visible) return;
     const steps = 40;
     const interval = 900 / steps;
@@ -83,9 +89,9 @@ function StatCounter({ num, label }: { num: string; label: string }) {
     return () => clearInterval(timer);
   }, [visible]);
   return (
-    <div ref={ref}>
-      <div className="stat-num">{count}{hasPlus ? "+" : ""}</div>
-      <div className="stat-label">{label}</div>
+    <div ref={ref} aria-label={`${target}${hasPlus ? "+" : ""} ${label}`}>
+      <div className="stat-num" aria-hidden="true">{count}{hasPlus ? "+" : ""}</div>
+      <div className="stat-label" aria-hidden="true">{label}</div>
     </div>
   );
 }
@@ -101,6 +107,7 @@ export default function Portfolio() {
   const [activeSection, setActiveSection] = useState("");
   const [scrollProgress, setScrollProgress] = useState(0);
   const [resumeOpen, setResumeOpen] = useState(false);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const t = setInterval(() => setTitleIndex(i => (i + 1) % TITLES.length), 3000);
@@ -128,12 +135,19 @@ export default function Portfolio() {
 
   useEffect(() => {
     if (!menuOpen) return;
-    const handler = (e: MouseEvent) => {
+    const handleClick = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
-      if (!t.closest("nav") && !t.closest(".mobile-menu")) setMenuOpen(false);
+      if (!t.closest("header") && !t.closest(".mobile-menu")) setMenuOpen(false);
     };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setMenuOpen(false); hamburgerRef.current?.focus(); }
+    };
+    document.addEventListener("click", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("click", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
   }, [menuOpen]);
 
   useEffect(() => {
@@ -148,156 +162,189 @@ export default function Portfolio() {
 
   return (
     <>
-      <div className="grid-bg" />
-      <div className="noise" />
-      <div className="scroll-progress" style={{ width: `${scrollProgress * 100}%` }} />
+      <a href="#main-content" className="skip-link">Skip to main content</a>
+      <div className="grid-bg" aria-hidden="true" />
+      <div className="noise" aria-hidden="true" />
+      <div className="scroll-progress" aria-hidden="true" style={{ width: `${scrollProgress * 100}%` }} />
 
-      {/* NAV */}
-      <nav>
-        <a className="nav-logo" href="#hero" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}><img src="/icon.svg" alt="MT" width={36} height={36} /></a>
-        <ul className="nav-links">
+      {/* HEADER / NAV */}
+      <header>
+        <nav aria-label="Main navigation">
+          <a className="nav-logo" href="#hero" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+            <img src="/icon.svg" alt="Michael Taylor - Home" width={36} height={36} />
+          </a>
+          <ul className="nav-links">
+            {["experience", "skills", "certifications", "contact"].map(s => (
+              <li key={s}><a href={`#${s}`} onClick={e => { e.preventDefault(); scrollTo(s); }} className={activeSection === s ? "active" : ""} aria-current={activeSection === s ? "true" : undefined}>{s}</a></li>
+            ))}
+          </ul>
+          <button
+            ref={hamburgerRef}
+            className={`hamburger ${menuOpen ? "open" : ""}`}
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+          >
+            <span /><span /><span />
+          </button>
+        </nav>
+
+        {/* MOBILE MENU */}
+        <nav
+          id="mobile-menu"
+          className={`mobile-menu ${menuOpen ? "open" : ""}`}
+          aria-label="Mobile navigation"
+          aria-hidden={!menuOpen || undefined}
+        >
           {["experience", "skills", "certifications", "contact"].map(s => (
-            <li key={s}><a href={`#${s}`} onClick={e => { e.preventDefault(); scrollTo(s); }} className={activeSection === s ? "active" : ""}>{s}</a></li>
+            <a key={s} href={`#${s}`} onClick={e => { e.preventDefault(); scrollTo(s); setMenuOpen(false); }} className={activeSection === s ? "active" : ""} aria-current={activeSection === s ? "true" : undefined}>{s}</a>
           ))}
-        </ul>
-        <button className={`hamburger ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(o => !o)} aria-label="Toggle menu">
-          <span /><span /><span />
-        </button>
-      </nav>
+        </nav>
+      </header>
 
-      {/* MOBILE MENU */}
-      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
-        {["experience", "skills", "certifications", "contact"].map(s => (
-          <a key={s} href={`#${s}`} onClick={e => { e.preventDefault(); scrollTo(s); setMenuOpen(false); }} className={activeSection === s ? "active" : ""}>{s}</a>
-        ))}
-      </div>
-
-      {/* HERO */}
-      <section className="hero" id="hero">
-        <div className="hero-glow" />
-        <div style={{ maxWidth: 1100, margin: "0 auto", width: "100%" }}>
-          {AVAILABLE && <div className="hero-eyebrow">Available for opportunities</div>}
-          <h1 className="hero-name">Michael<br /><span>Taylor</span></h1>
-          <p className="hero-title">
-            {TITLES[titleIndex]}<span className="cursor" />
-          </p>
-          <p className="hero-bio">
-            Mission-driven developer with 15+ years building responsive, accessible web applications
-            for federal and defense clients — including NASA and the U.S. Naval Academy. Deep expertise
-            in React and Angular, with a track record of delivering under pressure.
-          </p>
-          <div className="hero-cta">
-            <button className="btn-primary" onClick={() => scrollTo("experience")}>
-              <span>View Experience</span>
-            </button>
-            <button className="btn-secondary" onClick={() => scrollTo("contact")}>
-              Get In Touch
-            </button>
-            <div className="resume-download">
-              <button className="btn-secondary" onClick={() => setResumeOpen(o => !o)}>
-                Download Resume ▾
+      <main id="main-content">
+        {/* HERO */}
+        <section className="hero" id="hero" aria-labelledby="hero-heading">
+          <div className="hero-glow" aria-hidden="true" />
+          <div style={{ maxWidth: 1100, margin: "0 auto", width: "100%" }}>
+            {AVAILABLE && <div className="hero-eyebrow">Available for opportunities</div>}
+            <h1 className="hero-name" id="hero-heading">Michael<br /><span>Taylor</span></h1>
+            <p className="hero-title" aria-label={TITLES[titleIndex]}>
+              {TITLES[titleIndex]}<span className="cursor" aria-hidden="true" />
+            </p>
+            <p className="hero-bio">
+              Mission-driven developer with 15+ years building responsive, accessible web applications
+              for federal and defense clients — including NASA and the U.S. Naval Academy. Deep expertise
+              in React and Angular, with a track record of delivering under pressure.
+            </p>
+            <div className="hero-cta">
+              <button className="btn-primary" onClick={() => scrollTo("experience")}>
+                <span>View Experience</span>
               </button>
-              <div className={`resume-dropdown ${resumeOpen ? "open" : ""}`}>
-                <a href="/docs/Mike-Taylor-Resume.pdf" download>PDF</a>
-                <a href="/docs/Mike-Taylor-Resume.docx" download>Word (.docx)</a>
+              <button className="btn-secondary" onClick={() => scrollTo("contact")}>
+                Get In Touch
+              </button>
+              <div className="resume-download">
+                <button
+                  className="btn-secondary"
+                  onClick={() => setResumeOpen(o => !o)}
+                  aria-expanded={resumeOpen}
+                  aria-controls="resume-dropdown"
+                  aria-haspopup="true"
+                >
+                  Download Resume <span aria-hidden="true">▾</span>
+                </button>
+                <div id="resume-dropdown" className={`resume-dropdown ${resumeOpen ? "open" : ""}`} role="menu">
+                  <a href="/docs/Mike-Taylor-Resume.pdf" download role="menuitem">PDF</a>
+                  <a href="/docs/Mike-Taylor-Resume.docx" download role="menuitem">Word (.docx)</a>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="hero-stats">
-            {STATS.map(([num, label]) => (
-              <StatCounter key={label} num={num} label={label} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* EXPERIENCE */}
-      <section id="experience">
-        <div className="section-inner">
-          <div className="section-label">Career</div>
-          <h2 className="section-title">Experience</h2>
-          <div className="timeline">
-            {experience.map((job, i) => (
-              <AnimatedItem key={i} className="timeline-item" delay={i * 80}>
-                <div className="timeline-dot" />
-                <div className="timeline-card">
-                  <div className="timeline-meta">
-                    <div className="timeline-company">{job.company}</div>
-                    <div className="timeline-date">{job.date}</div>
-                  </div>
-                  <div className="timeline-role">{job.role}</div>
-                  <div className="timeline-location">📍 {job.location}</div>
-                  <ul className="timeline-bullets">
-                    {job.bullets.map((b, j) => <li key={j}>{b}</li>)}
-                  </ul>
-                  <div className="tech-tags">
-                    {job.tech.map(t => <span key={t} className="tech-tag">{t}</span>)}
-                  </div>
-                </div>
-              </AnimatedItem>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SKILLS */}
-      <section id="skills" style={{ background: "linear-gradient(to bottom, transparent, rgba(0,212,255,0.02), transparent)" }}>
-        <div className="section-inner">
-          <div className="section-label">Capabilities</div>
-          <h2 className="section-title">Technical Skills</h2>
-          <div className="skills-grid">
-            {skills.map((sg, i) => (
-              <AnimatedItem key={i} className="skill-group" delay={i * 80}>
-                <div className="skill-group-title">{sg.group}</div>
-                <div className="skill-list">
-                  {sg.items.map(s => <span key={s} className="skill-item">{s}</span>)}
-                </div>
-              </AnimatedItem>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CERTIFICATIONS & EDUCATION */}
-      <section id="certifications">
-        <div className="section-inner">
-          <div className="section-label">Credentials</div>
-          <h2 className="section-title">Certifications</h2>
-          <AnimatedItem className="cert-card">
-            <div className="cert-badge">SEC+</div>
-            <div>
-              <div className="cert-name">CompTIA Security+</div>
-              <div className="cert-meta">Issued <span>April 2021</span></div>
-              <div className="cert-meta">ID: <span>COMP001021757831</span></div>
+            <div className="hero-stats">
+              {STATS.map(([num, label]) => (
+                <StatCounter key={label} num={num} label={label} />
+              ))}
             </div>
-          </AnimatedItem>
+          </div>
+        </section>
 
-          <div style={{ marginTop: 64 }}>
-            <div className="section-label" style={{ marginBottom: 16 }}>Academic</div>
-            <h2 className="section-title" style={{ fontSize: "clamp(28px,4vw,42px)", marginBottom: 32 }}>Education</h2>
-            <AnimatedItem className="edu-card">
-              <div className="edu-degree">B.S., Computer Science</div>
-              <div className="edu-school">Morgan State University</div>
-              <div className="edu-location">Baltimore, MD</div>
+        {/* EXPERIENCE */}
+        <section id="experience" aria-labelledby="experience-heading">
+          <div className="section-inner">
+            <div className="section-label" aria-hidden="true">Career</div>
+            <h2 className="section-title" id="experience-heading">Experience</h2>
+            <div className="timeline">
+              {experience.map((job, i) => (
+                <AnimatedItem key={i} className="timeline-item" delay={i * 80}>
+                  <div className="timeline-dot" aria-hidden="true" />
+                  <div className="timeline-card">
+                    <div className="timeline-meta">
+                      <div className="timeline-company">{job.company}</div>
+                      <div className="timeline-date">{job.date}</div>
+                    </div>
+                    <div className="timeline-role">{job.role}</div>
+                    <div className="timeline-location"><span aria-hidden="true">📍</span> {job.location}</div>
+                    <ul className="timeline-bullets">
+                      {job.bullets.map((b, j) => <li key={j}>{b}</li>)}
+                    </ul>
+                    <div className="tech-tags" aria-label="Technologies used">
+                      {job.tech.map(t => <span key={t} className="tech-tag">{t}</span>)}
+                    </div>
+                  </div>
+                </AnimatedItem>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SKILLS */}
+        <section id="skills" aria-labelledby="skills-heading" style={{ background: "linear-gradient(to bottom, transparent, rgba(0,212,255,0.02), transparent)" }}>
+          <div className="section-inner">
+            <div className="section-label" aria-hidden="true">Capabilities</div>
+            <h2 className="section-title" id="skills-heading">Technical Skills</h2>
+            <div className="skills-grid">
+              {skills.map((sg, i) => (
+                <AnimatedItem key={i} className="skill-group" delay={i * 80}>
+                  <div className="skill-group-title">{sg.group}</div>
+                  <div className="skill-list">
+                    {sg.items.map(s => <span key={s} className="skill-item">{s}</span>)}
+                  </div>
+                </AnimatedItem>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CERTIFICATIONS & EDUCATION */}
+        <section id="certifications" aria-labelledby="certifications-heading">
+          <div className="section-inner">
+            <div className="section-label" aria-hidden="true">Credentials</div>
+            <h2 className="section-title" id="certifications-heading">Certifications</h2>
+            <AnimatedItem className="cert-card">
+              <div className="cert-badge" aria-hidden="true">SEC+</div>
+              <div>
+                <div className="cert-name">CompTIA Security+</div>
+                <div className="cert-meta">Issued <span>April 2021</span></div>
+                <div className="cert-meta">ID: <span>COMP001021757831</span></div>
+              </div>
             </AnimatedItem>
-          </div>
-        </div>
-      </section>
 
-      {/* CONTACT */}
-      <section id="contact" className="contact-section">
-        <div className="contact-inner">
-          <h2 className="contact-heading">Let&apos;s build<br /><span>something.</span></h2>
-          <div className="contact-links">
-            {CONTACT_LINKS.map(({ icon, label, href }) => (
-              <a key={label} className="contact-link" href={href} target="_blank" rel="noreferrer">
-                <div className="contact-link-icon">{icon}</div>
-                {label}
-              </a>
-            ))}
+            <div style={{ marginTop: 64 }}>
+              <div className="section-label" style={{ marginBottom: 16 }} aria-hidden="true">Academic</div>
+              <h3 className="section-title" id="education-heading" style={{ fontSize: "clamp(28px,4vw,42px)", marginBottom: 32 }}>Education</h3>
+              <AnimatedItem className="edu-card">
+                <div className="edu-degree">B.S., Computer Science</div>
+                <div className="edu-school">Morgan State University</div>
+                <div className="edu-location">Baltimore, MD</div>
+              </AnimatedItem>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* CONTACT */}
+        <section id="contact" className="contact-section" aria-labelledby="contact-heading">
+          <div className="contact-inner">
+            <h2 className="contact-heading" id="contact-heading">Let&apos;s build<br /><span>something.</span></h2>
+            <div className="contact-links">
+              {CONTACT_LINKS.map(({ icon, label, href }) => {
+                const isExternal = href.startsWith("http");
+                return (
+                  <a
+                    key={label}
+                    className="contact-link"
+                    href={href}
+                    {...(isExternal ? { target: "_blank", rel: "noreferrer", "aria-label": `${label} (opens in new window)` } : {})}
+                  >
+                    <div className="contact-link-icon" aria-hidden="true">{icon}</div>
+                    {label}
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      </main>
 
       <footer>
         <p>© {new Date().getFullYear()} Michael Taylor</p>
@@ -308,7 +355,7 @@ export default function Portfolio() {
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         aria-label="Back to top"
       >
-        ↑
+        <span aria-hidden="true">↑</span>
       </button>
     </>
   );
