@@ -1,18 +1,50 @@
 [
   {
     "group": "Frontend",
-    "items": ["React", "Angular (2–17)", "AngularJS", "Next.js", "TypeScript", "JavaScript (ES6+)", "HTML5", "CSS3"]
+    "items": [
+      { "name": "React",               "level": 85 },
+      { "name": "Angular (2–17)",      "level": 90 },
+      { "name": "AngularJS",           "level": 70 },
+      { "name": "Next.js",             "level": 90 },
+      { "name": "TypeScript",          "level": 90 },
+      { "name": "JavaScript (ES6+)",   "level": 95 },
+      { "name": "HTML5",               "level": 95 },
+      { "name": "CSS3",                "level": 90 }
+    ]
   },
   {
     "group": "Styling",
-    "items": ["Tailwind CSS", "Bootstrap", "Material UI", "Foundation", "Responsive Design", "Section 508"]
+    "items": [
+      { "name": "Tailwind CSS",        "level": 90 },
+      { "name": "Bootstrap",           "level": 90 },
+      { "name": "Material UI",         "level": 80 },
+      { "name": "Foundation",          "level": 70 },
+      { "name": "Responsive Design",   "level": 95 },
+      { "name": "Section 508",         "level": 90 }
+    ]
   },
   {
     "group": "Backend & APIs",
-    "items": ["RESTful APIs", ".NET Core", "SQL Server", "MySQL", "PHP", "Node.js"]
+    "items": [
+      { "name": "RESTful APIs",        "level": 80 },
+      { "name": ".NET Core",           "level": 70 },
+      { "name": "SQL Server",          "level": 75 },
+      { "name": "MySQL",               "level": 70 },
+      { "name": "PHP",                 "level": 60 },
+      { "name": "Node.js",             "level": 80 }
+    ]
   },
   {
     "group": "Tools & Platforms",
-    "items": ["Git", "GitLab", "Azure", "Docker", "Postman", "Swagger", "JIRA", "Confluence"]
+    "items": [
+      { "name": "Git",                 "level": 90 },
+      { "name": "GitLab",              "level": 85 },
+      { "name": "Azure",               "level": 70 },
+      { "name": "Docker",              "level": 70 },
+      { "name": "Postman",             "level": 80 },
+      { "name": "Swagger",             "level": 80 },
+      { "name": "JIRA",                "level": 85 },
+      { "name": "Confluence",          "level": 80 }
+    ]
   }
 ]

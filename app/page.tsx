@@ -13,9 +13,10 @@ type Job = {
   tech: string[];
 };
 
+type SkillItem = { name: string; level: number };
 type SkillGroup = {
   group: string;
-  items: string[];
+  items: SkillItem[];
 };
 
 const experience: Job[] = experienceData;
@@ -27,7 +28,7 @@ const TITLES = ["Front End Developer", "Web Developer", "React & Angular Expert"
 const CONTACT_LINKS = [
   { icon: "✉",   label: "miketaylorforhire@gmail.com",     href: "mailto:miketaylorforhire@gmail.com" },
   { icon: "📞",  label: "410-940-2232",                    href: "tel:14109402232" },
-  { icon: "🌐",  label: "mikeetaylor.com",                 href: "https://mikeetaylor.com/" },
+  { icon: "🌐",  label: "mikeetaylor.com",                 href: "/" },
   { icon: "in",  label: "linkedin.com/in/miketaylorforhire", href: "https://www.linkedin.com/in/miketaylorforhire/" },
   { icon: "</>", label: "github.com/miketaylorforhire",    href: "https://github.com/miketaylorforhire/" },
 ];
@@ -36,7 +37,7 @@ const STATS: [string, string][] = [
   ["15+", "Years Experience"],
   ["5",   "Federal Clients"],
   ["10+", "Apps Shipped"],
-  ["1",   "Security+ Cert"],
+  ["1",   "Security+ Certification"],
 ];
 
 function useIntersection(ref: RefObject<null>) {
@@ -89,9 +90,25 @@ function StatCounter({ num, label }: { num: string; label: string }) {
     return () => clearInterval(timer);
   }, [visible]);
   return (
-    <div ref={ref} aria-label={`${target}${hasPlus ? "+" : ""} ${label}`}>
+    <div ref={ref} role="img" aria-label={`${target}${hasPlus ? "+" : ""} ${label}`}>
       <div className="stat-num" aria-hidden="true">{count}{hasPlus ? "+" : ""}</div>
       <div className="stat-label" aria-hidden="true">{label}</div>
+    </div>
+  );
+}
+
+function AnimatedBar({ name, level }: SkillItem) {
+  const ref = useRef(null);
+  const visible = useIntersection(ref);
+  return (
+    <div ref={ref} className="skill-bar-item">
+      <div className="skill-bar-header">
+        <span className="skill-bar-name">{name}</span>
+        <span className="skill-bar-pct" aria-hidden="true">{level}%</span>
+      </div>
+      <div className="skill-bar-track" role="progressbar" aria-valuenow={level} aria-valuemin={0} aria-valuemax={100} aria-label={`${name} proficiency`}>
+        <div className="skill-bar-fill" style={{ width: visible ? `${level}%` : "0%" }} />
+      </div>
     </div>
   );
 }
@@ -107,7 +124,19 @@ export default function Portfolio() {
   const [activeSection, setActiveSection] = useState("");
   const [scrollProgress, setScrollProgress] = useState(0);
   const [resumeOpen, setResumeOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [copied, setCopied] = useState(false);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme") as "dark" | "light" | null;
+    if (saved) setTheme(saved);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     const t = setInterval(() => setTitleIndex(i => (i + 1) % TITLES.length), 3000);
@@ -171,13 +200,19 @@ export default function Portfolio() {
       <header>
         <nav aria-label="Main navigation">
           <a className="nav-logo" href="#hero" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
-            <img src="/icon.svg" alt="Michael Taylor - Home" width={36} height={36} />
+            <img src="/icon.svg" alt="Mike E. Taylor - Home" width={36} height={36} />
           </a>
           <ul className="nav-links">
             {["experience", "skills", "certifications", "contact"].map(s => (
               <li key={s}><a href={`#${s}`} onClick={e => { e.preventDefault(); scrollTo(s); }} className={activeSection === s ? "active" : ""} aria-current={activeSection === s ? "true" : undefined}>{s}</a></li>
             ))}
           </ul>
+          <div className="nav-right">
+          <button
+            className="theme-toggle"
+            onClick={() => setTheme(t => t === "dark" ? "light" : "dark")}
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          />
           <button
             ref={hamburgerRef}
             className={`hamburger ${menuOpen ? "open" : ""}`}
@@ -188,6 +223,7 @@ export default function Portfolio() {
           >
             <span /><span /><span />
           </button>
+          </div>
         </nav>
 
         {/* MOBILE MENU */}
@@ -198,7 +234,7 @@ export default function Portfolio() {
           aria-hidden={!menuOpen || undefined}
         >
           {["experience", "skills", "certifications", "contact"].map(s => (
-            <a key={s} href={`#${s}`} onClick={e => { e.preventDefault(); scrollTo(s); setMenuOpen(false); }} className={activeSection === s ? "active" : ""} aria-current={activeSection === s ? "true" : undefined}>{s}</a>
+            <a key={s} href={`#${s}`} onClick={e => { e.preventDefault(); scrollTo(s); setMenuOpen(false); }} className={activeSection === s ? "active" : ""} aria-current={activeSection === s ? "true" : undefined} tabIndex={menuOpen ? undefined : -1}>{s}</a>
           ))}
         </nav>
       </header>
@@ -209,7 +245,7 @@ export default function Portfolio() {
           <div className="hero-glow" aria-hidden="true" />
           <div style={{ maxWidth: 1100, margin: "0 auto", width: "100%" }}>
             {AVAILABLE && <div className="hero-eyebrow">Available for opportunities</div>}
-            <h1 className="hero-name" id="hero-heading">Michael<br /><span>Taylor</span></h1>
+            <h1 className="hero-name" id="hero-heading">Mike E.<br /><span>Taylor</span></h1>
             <p className="hero-title" aria-label={TITLES[titleIndex]}>
               {TITLES[titleIndex]}<span className="cursor" aria-hidden="true" />
             </p>
@@ -288,7 +324,7 @@ export default function Portfolio() {
                 <AnimatedItem key={i} className="skill-group" delay={i * 80}>
                   <div className="skill-group-title">{sg.group}</div>
                   <div className="skill-list">
-                    {sg.items.map(s => <span key={s} className="skill-item">{s}</span>)}
+                    {sg.items.map(s => <AnimatedBar key={s.name} name={s.name} level={s.level} />)}
                   </div>
                 </AnimatedItem>
               ))}
@@ -329,16 +365,27 @@ export default function Portfolio() {
             <div className="contact-links">
               {CONTACT_LINKS.map(({ icon, label, href }) => {
                 const isExternal = href.startsWith("http");
+                const isEmail = href.startsWith("mailto:");
                 return (
-                  <a
-                    key={label}
-                    className="contact-link"
-                    href={href}
-                    {...(isExternal ? { target: "_blank", rel: "noreferrer", "aria-label": `${label} (opens in new window)` } : {})}
-                  >
-                    <div className="contact-link-icon" aria-hidden="true">{icon}</div>
-                    {label}
-                  </a>
+                  <div key={label} className="contact-link-row">
+                    <a
+                      className="contact-link"
+                      href={href}
+                      {...(isExternal ? { target: "_blank", rel: "noreferrer", "aria-label": `${label} (opens in new window)` } : {})}
+                    >
+                      <div className="contact-link-icon" aria-hidden="true">{icon}</div>
+                      {label}
+                    </a>
+                    {isEmail && (
+                      <button
+                        className={`copy-btn ${copied ? "copied" : ""}`}
+                        onClick={() => { navigator.clipboard.writeText(label); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+                        aria-label="Copy email address"
+                      >
+                        {copied ? "✓" : "⧉"}
+                      </button>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -347,7 +394,7 @@ export default function Portfolio() {
       </main>
 
       <footer>
-        <p>© {new Date().getFullYear()} Michael Taylor</p>
+        <p>© {new Date().getFullYear()} Mike E. Taylor</p>
       </footer>
 
       <button

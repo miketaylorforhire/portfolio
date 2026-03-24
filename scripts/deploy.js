@@ -27,7 +27,7 @@ const config = {
   remoteRoot: "/mikeetaylor.com/",
   include: ["*", "**/*"],
   exclude: [],
-  deleteRemote: true,
+  deleteRemote: false,
   forcePasv: true,
 };
 

@@ -4,15 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/generate-og.mjs && next build",
     "start": "next start",
     "lint": "eslint",
-    "deploy": "next build && node scripts/deploy.js"
+    "generate-og": "node scripts/generate-og.mjs",
+    "deploy": "node scripts/generate-og.mjs && next build && node scripts/deploy.js"
   },
   "dependencies": {
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "satori": "^0.25.0",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
