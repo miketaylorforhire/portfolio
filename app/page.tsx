@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, RefObject } from "react";
 import experienceData from "./data/experience.json"
 import skillsData from "./data/skills.json";
+import projectsData from "./data/projects.json";
 
 type Job = {
   company: string;
@@ -13,6 +14,16 @@ type Job = {
   tech: string[];
 };
 
+type Project = {
+  name: string;
+  tagline: string;
+  bullets: string[];
+  tech: string[];
+  image: string;
+  live: string;
+  repo: string;
+};
+
 type SkillItem = { name: string; level: number };
 type SkillGroup = {
   group: string;
@@ -21,6 +32,7 @@ type SkillGroup = {
 
 const experience: Job[] = experienceData;
 const skills: SkillGroup[] = skillsData;
+const projects: Project[] = projectsData as Project[];
 
 const AVAILABLE = true; // set to false when no longer looking
 const TITLES = ["Front End Developer", "Web Developer", "React & Angular Expert", "Federal Tech Specialist"];
@@ -126,6 +138,7 @@ export default function Portfolio() {
   const [resumeOpen, setResumeOpen] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [copied, setCopied] = useState(false);
+  const [projectIndex, setProjectIndex] = useState(0);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -144,7 +157,11 @@ export default function Portfolio() {
   }, []);
 
   useEffect(() => {
-    const SECTIONS = ["experience", "skills", "certifications", "contact"];
+    projects.forEach(p => { const img = new Image(); img.src = p.image; });
+  }, []);
+
+  useEffect(() => {
+    const SECTIONS = ["experience", "projects", "skills", "certifications", "contact"];
     const onScroll = () => {
       const sy = window.scrollY;
       setShowTop(sy > 400);
@@ -203,7 +220,7 @@ export default function Portfolio() {
             <img src="/icon.svg" alt="Mike E. Taylor - Home" width={36} height={36} />
           </a>
           <ul className="nav-links">
-            {["experience", "skills", "certifications", "contact"].map(s => (
+            {["experience", "projects", "skills", "certifications", "contact"].map(s => (
               <li key={s}><a href={`#${s}`} onClick={e => { e.preventDefault(); scrollTo(s); }} className={activeSection === s ? "active" : ""} aria-current={activeSection === s ? "true" : undefined}>{s}</a></li>
             ))}
           </ul>
@@ -233,7 +250,7 @@ export default function Portfolio() {
           aria-label="Mobile navigation"
           aria-hidden={!menuOpen || undefined}
         >
-          {["experience", "skills", "certifications", "contact"].map(s => (
+          {["experience", "projects", "skills", "certifications", "contact"].map(s => (
             <a key={s} href={`#${s}`} onClick={e => { e.preventDefault(); scrollTo(s); setMenuOpen(false); }} className={activeSection === s ? "active" : ""} aria-current={activeSection === s ? "true" : undefined} tabIndex={menuOpen ? undefined : -1}>{s}</a>
           ))}
         </nav>
@@ -310,6 +327,55 @@ export default function Portfolio() {
                   </div>
                 </AnimatedItem>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* PROJECTS */}
+        <section id="projects" aria-labelledby="projects-heading">
+          <div className="section-inner">
+            <div className="section-label" aria-hidden="true">Work</div>
+            <h2 className="section-title" id="projects-heading">Projects</h2>
+            <div className="projects-slideshow" tabIndex={0} role="region" aria-roledescription="carousel" aria-label="Projects" onKeyDown={e => { if (e.key === "ArrowLeft") { e.preventDefault(); setProjectIndex(i => (i - 1 + projects.length) % projects.length); } else if (e.key === "ArrowRight") { e.preventDefault(); setProjectIndex(i => (i + 1) % projects.length); } }} onTouchStart={e => { (e.currentTarget as any)._touchX = e.touches[0].clientX; }} onTouchEnd={e => { const start = (e.currentTarget as any)._touchX; if (start == null) return; const diff = e.changedTouches[0].clientX - start; if (Math.abs(diff) > 50) { setProjectIndex(i => diff < 0 ? (i + 1) % projects.length : (i - 1 + projects.length) % projects.length); } }}>
+              <button className="slide-btn slide-btn--prev" onClick={() => setProjectIndex(i => (i - 1 + projects.length) % projects.length)} aria-label="Previous project">&#8592;</button>
+              <div className="slide-dots slide-dots--top">
+                {projects.map((_, i) => (
+                  <button key={i} className={`slide-dot${i === projectIndex ? " active" : ""}`} onClick={() => setProjectIndex(i)} aria-label={`Go to project ${i + 1}`} />
+                ))}
+              </div>
+              <div className="sr-only" aria-live="polite">{`Project ${projectIndex + 1} of ${projects.length}: ${projects[projectIndex].name}`}</div>
+              <div className="projects-slide" key={projectIndex}>
+                {(() => { const p = projects[projectIndex]; return (
+                  <div className="project-card visible">
+                    <a href={p.live} target="_blank" rel="noreferrer" className="project-image-link" aria-label={`${p.name} — visit live site (opens in new window)`}>
+                      <img src={p.image} alt={`${p.name} screenshot`} className="project-image" />
+                      <div className="project-image-overlay" aria-hidden="true" />
+                    </a>
+                    <div className="project-body">
+                      <div className="project-header">
+                        <div className="project-name">{p.name}</div>
+                        <div className="project-links">
+                          <a href={p.live} target="_blank" rel="noreferrer" aria-label="Live site (opens in new window)">↗ Live</a>
+                          <a href={p.repo} target="_blank" rel="noreferrer" aria-label="GitHub repo (opens in new window)">⌥ Repo</a>
+                        </div>
+                      </div>
+                      <p className="project-tagline">{p.tagline}</p>
+                      <ul className="project-bullets">
+                        {p.bullets.map((b, j) => <li key={j}>{b}</li>)}
+                      </ul>
+                      <div className="tech-tags" aria-label="Technologies used">
+                        {p.tech.map(t => <span key={t} className="tech-tag">{t}</span>)}
+                      </div>
+                    </div>
+                  </div>
+                ); })()}
+              </div>
+              <button className="slide-btn slide-btn--next" onClick={() => setProjectIndex(i => (i + 1) % projects.length)} aria-label="Next project">&#8594;</button>
+              <div className="slide-dots slide-dots--bottom">
+                {projects.map((_, i) => (
+                  <button key={i} className={`slide-dot${i === projectIndex ? " active" : ""}`} onClick={() => setProjectIndex(i)} aria-label={`Go to project ${i + 1}`} />
+                ))}
+              </div>
             </div>
           </div>
         </section>

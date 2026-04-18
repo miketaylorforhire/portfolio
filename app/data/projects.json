@@ -1,0 +1,47 @@
+[
+  {
+    "name": "The Hillen Group",
+    "tagline": "Corporate site for a federal IT consulting firm — built from scratch",
+    "bullets": [
+      "Architected and shipped the full site from a blank canvas — no templates used",
+      "Implemented static site generation via react-snap for near-instant page loads",
+      "Integrated serverless contact form via EmailJS — zero backend required",
+      "Configured GitHub Actions CI/CD pipeline for automated production deployments",
+      "Achieved 95+ Lighthouse scores across performance, accessibility, and SEO"
+    ],
+    "tech": ["React", "Tailwind CSS", "EmailJS", "react-snap", "GitHub Actions", "PostCSS"],
+    "image": "/projects/hillen-group.png",
+    "live": "https://thehillengroup.net",
+    "repo": "https://github.com/thehillengroup/hillen-site"
+  },
+  {
+    "name": "CarFolio",
+    "tagline": "Full-stack vehicle maintenance tracker — web and mobile in a shared monorepo",
+    "bullets": [
+      "CarFolio is a vehicle management app that keeps all your cars, trucks, and SUVs organized in one place",
+      "Add your vehicles and CarFolio reminds you when registration renewals and emissions inspections are coming due",
+      "Log every oil change, tire rotation, and repair — so you always know what's been done and what's next",
+      "Available on the web and as a mobile app, so your vehicle records are always in your pocket",
+      "Designed for everyday drivers and multi-vehicle households who are tired of losing track of paperwork"
+    ],
+    "tech": ["Next.js", "React Native", "Expo", "TypeScript", "Prisma", "Zod", "Tailwind CSS", "NativeWind", "Turborepo", "PostgreSQL"],
+    "image": "/projects/mycarfolio.png",
+    "live": "https://mycarfolio.com",
+    "repo": "https://github.com/thehillengroup/vehicle-maintenance-app"
+  },
+  {
+    "name": "MedicalMeasures",
+    "tagline": "Role-based healthcare quality management SPA for tracking HEDIS measures and care gaps",
+    "bullets": [
+      "Built five distinct role-based dashboards (Admin, Quality Analyst, Provider, Auditor, Abstractor) with route-guarded access per role",
+      "Implemented HEDIS measure tracking with domain performance bar charts and status distribution doughnut charts benchmarked against a 75% threshold",
+      "Designed care gap management with prioritized gap lists, member assignment, and open/in-progress/resolved status tracking",
+      "Built a clinical abstraction workflow queue with audit trail entries and multi-stage status tracking per member and measure",
+      "Supported CSV import for member rosters and care gap data with lazy-loaded feature modules for optimized performance"
+    ],
+    "tech": ["Angular 18", "TypeScript", "Angular Material", "Bootstrap 5", "Chart.js", "ng2-charts", "Angular CDK"],
+    "image": "/projects/medicalmeasures.png",
+    "live": "https://mikeetaylor.com/projects/medicalmeasures",
+    "repo": "https://github.com/miketaylorforhire/measures-app"
+  }
+]

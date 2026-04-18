@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Outfit } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import "./styles.css";
 
@@ -69,6 +70,13 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-76X4SGJXE2" strategy="afterInteractive" />
+      <Script id="google-analytics" strategy="afterInteractive">{`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-76X4SGJXE2');
+      `}</Script>
       <body className="antialiased">
         {children}
       </body>

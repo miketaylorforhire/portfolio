@@ -25,7 +25,7 @@ const config = {
   port: 21,
   localRoot: path.resolve(__dirname, "../out"),
   remoteRoot: "/mikeetaylor.com/",
-  include: ["*", "**/*"],
+  include: ["*", "**/*", ".*", "**/.*"],
   exclude: [],
   deleteRemote: false,
   forcePasv: true,
@@ -35,8 +35,8 @@ console.log(`📡 Connecting as ${config.user}...`);
 
 ftpDeploy
   .deploy(config)
-  .then(() => console.log("✅ Deployed successfully to mikeetaylor.com"))
-  .catch((err) => console.error("❌ Deploy failed:", err));
+  .then(() => console.log(`✅ Deployed successfully to mikeetaylor.com at ${new Date().toLocaleString()}`))
+  .catch((err) => console.error(`❌ Deploy failed at ${new Date().toLocaleString()}:`, err));
 
 ftpDeploy.on("uploading", (data) => {
   console.log(`  ↑ ${data.transferredFileCount}/${data.totalFilesCount} — ${data.filename}`);
